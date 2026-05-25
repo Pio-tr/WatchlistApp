@@ -2,6 +2,7 @@ package com.example.watchlistapp.screens.movies
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.watchlistapp.R
 import com.example.watchlistapp.database.WatchlistMovie
 import com.example.watchlistapp.database.WatchlistRepository
 import com.example.watchlistapp.model.MovieSearchResponse
@@ -25,7 +26,11 @@ sealed interface SearchUiState {
         val currentPage: Int,
         val totalPages: Int
     ) : SearchUiState
-    data class Error(val message: String) : SearchUiState
+
+    data class Error(
+        val titleRes: Int,
+        val dynamicMessage: String? = null
+    ) : SearchUiState
 }
 
 class MovieListViewModel(private val repository: WatchlistRepository) : ViewModel() {
@@ -38,7 +43,6 @@ class MovieListViewModel(private val repository: WatchlistRepository) : ViewMode
 
     fun onSearchQueryChange(newQuery: String) {
         _searchQuery.value = newQuery
-        // Funkcja zmienia tylko tekst, nie dotyka stanu _searchUiState!
     }
 
     fun onTypeChange(newType: MovieType?) {
@@ -69,7 +73,7 @@ class MovieListViewModel(private val repository: WatchlistRepository) : ViewMode
         val query = _searchQuery.value
 
         if (query.isBlank()) {
-            _searchUiState.value = SearchUiState.Error("Wpisz tytuł produkcji przed wyszukiwaniem.")
+            _searchUiState.value = SearchUiState.Error(titleRes = R.string.error_empty_query)
             return
         }
         currentQuery = query
@@ -119,12 +123,22 @@ class MovieListViewModel(private val repository: WatchlistRepository) : ViewMode
                         totalPages = totalPages
                     )
                 } else {
-                    _searchUiState.value = SearchUiState.Error(body?.errorMessage ?: "Nie znaleziono produkcji.")
+                    if (body?.errorMessage != null) {
+                        _searchUiState.value = SearchUiState.Error(
+                            titleRes = R.string.error_api_failure,
+                            dynamicMessage = body.errorMessage
+                        )
+                    } else {
+                        _searchUiState.value = SearchUiState.Error(titleRes = R.string.error_no_productions)
+                    }
                 }
             }
 
             override fun onFailure(call: Call<MovieSearchResponse>, t: Throwable) {
-                _searchUiState.value = SearchUiState.Error("Błąd sieci: ${t.localizedMessage}")
+                _searchUiState.value = SearchUiState.Error(
+                    titleRes = R.string.error_network_failure,
+                    dynamicMessage = t.localizedMessage
+                )
             }
         })
     }

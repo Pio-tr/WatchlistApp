@@ -121,13 +121,11 @@ fun MovieDetailScreen(
 
                         Spacer(modifier = Modifier.height(12.dp))
 
-                        // NOWA SEKCA: Typ, Czas trwania, Ocena IMDb
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // 1. TYP (np. MOVIE / SERIES)
                             SuggestionChip(
                                 onClick = { },
                                 label = { Text((movie.type ?: fallbackText).uppercase()) },
@@ -136,14 +134,12 @@ fun MovieDetailScreen(
                                 )
                             )
 
-                            // 2. RUNTIME (Czas trwania)
                             Text(
                                 text = stringResource(R.string.movie_runtime, movie.runtime ?: fallbackText),
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Medium
                             )
 
-                            // 3. IMDB RATING (Ocena)
                             Text(
                                 text = stringResource(R.string.movie_rating, movie.imdbRating ?: fallbackText),
                                 style = MaterialTheme.typography.bodyMedium,
@@ -167,8 +163,13 @@ fun MovieDetailScreen(
                     }
                 }
                 is DetailUiState.Error -> {
+                    val fullErrorMessage = if (state.dynamicMessage != null) {
+                        stringResource(id = state.titleRes, state.dynamicMessage)
+                    } else {
+                        stringResource(id = state.titleRes)
+                    }
                     Text(
-                        text = state.message,
+                        text = fullErrorMessage,
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier.align(Alignment.Center)
                     )

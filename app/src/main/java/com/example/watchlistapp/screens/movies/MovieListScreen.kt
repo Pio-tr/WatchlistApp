@@ -122,7 +122,6 @@ fun MovieListScreen(
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-            // --- DYNAMICZNA OBSŁUGA KONTENTU Z PRZYPIĘTYM NAGŁÓWKIEM ---
             when (val state = searchUiState) {
                 is SearchUiState.Idle -> {
                     if (watchlistMovies.isEmpty()) {
@@ -200,8 +199,20 @@ fun MovieListScreen(
 
                 is SearchUiState.Error -> {
                     item {
-                        Box(modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp), contentAlignment = Alignment.Center) {
-                            Text(state.message, color = MaterialTheme.colorScheme.error)
+                        Box(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            val fullErrorMessage = if (state.dynamicMessage != null) {
+                                stringResource(id = state.titleRes, state.dynamicMessage)
+                            } else {
+                                stringResource(id = state.titleRes)
+                            }
+
+                            Text(
+                                text = fullErrorMessage,
+                                color = MaterialTheme.colorScheme.error
+                            )
                         }
                     }
                 }

@@ -7,12 +7,10 @@
     <string name="clear_description">Wyczyść</string>
     <string name="production_type">Typ produkcji:</string>
     <string name="type_all">Ogólne</string>
-
     <string name="watchlist_empty">Brak produkcji pasujących do wybranego typu.</string>
     <string name="watchlist_header">Do obejrzenia (%1$d):</string>
     <string name="search_results_header">Wyniki wyszukiwania:</string>
     <string name="movie_year">Rok: %1$s</string>
-
     <string name="page_previous">Poprzednia</string>
     <string name="page_next">Następna</string>
     <string name="page_counter">Strona %1$d z %2$d</string>
@@ -28,4 +26,12 @@
     <string name="movie_rating">⭐ %1$s/10</string>
     <string name="plot_title">Opis fabuły:</string>
     <string name="no_plot">Brak opisu dla tej produkcji.</string>
+    <string name="error_empty_query">Wpisz tytuł produkcji przed wyszukiwaniem.</string>
+    <string name="error_no_productions">Nie znaleziono produkcji.</string>
+    <string name="error_network_failure">Błąd sieci: %1$s</string>
+    <string name="error_api_failure">%1$s</string>
+    <string name="error_detail_api_failure">Błąd szczegółów: %1$s</string>
+    <string name="error_detail_unknown">Błąd pobierania szczegółów.</string>
+    <string name="error_detail_network_failure">Błąd sieci: %1$s</string>
+    <string name="fallback_not_available">N/A</string>
 </resources>

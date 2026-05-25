@@ -2,6 +2,7 @@ package com.example.watchlistapp.screens.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.watchlistapp.R
 import com.example.watchlistapp.database.WatchlistMovie
 import com.example.watchlistapp.database.WatchlistRepository
 import com.example.watchlistapp.model.MovieDetailsResponse
@@ -16,7 +17,8 @@ import retrofit2.Response
 sealed interface DetailUiState {
     object Loading : DetailUiState
     data class Success(val movieDetails: MovieDetailsResponse) : DetailUiState
-    data class Error(val message: String) : DetailUiState
+
+    data class Error(val titleRes: Int, val dynamicMessage: String? = null) : DetailUiState
 }
 
 class MovieDetailViewModel(private val repository: WatchlistRepository) : ViewModel() {
@@ -65,12 +67,22 @@ class MovieDetailViewModel(private val repository: WatchlistRepository) : ViewMo
                 if (response.isSuccessful && body != null && body.response == "True") {
                     _uiState.value = DetailUiState.Success(body)
                 } else {
-                    _uiState.value = DetailUiState.Error(body?.errorMessage ?: "Błąd pobierania szczegółów.")
+                    if (body?.errorMessage != null) {
+                        _uiState.value = DetailUiState.Error(
+                            titleRes = R.string.error_detail_api_failure,
+                            dynamicMessage = body.errorMessage
+                        )
+                    } else {
+                        _uiState.value = DetailUiState.Error(titleRes = R.string.error_detail_unknown)
+                    }
                 }
             }
 
             override fun onFailure(call: Call<MovieDetailsResponse>, t: Throwable) {
-                _uiState.value = DetailUiState.Error("Błąd sieci: ${t.localizedMessage}")
+                _uiState.value = DetailUiState.Error(
+                    titleRes = R.string.error_detail_network_failure,
+                    dynamicMessage = t.localizedMessage
+                )
             }
         })
     }
@@ -86,8 +98,8 @@ class MovieDetailViewModel(private val repository: WatchlistRepository) : ViewMo
             } else {
                 val fullMovieToSave = WatchlistMovie(
                     imdbId = imdbId,
-                    title = movieDetails.title ?: "N/A",
-                    year = movieDetails.year ?: "N/A",
+                    title = movieDetails.title ?: "",
+                    year = movieDetails.year ?: "",
                     posterUrl = movieDetails.posterUrl ?: "",
                     plot = movieDetails.plot,
                     genre = movieDetails.genre,

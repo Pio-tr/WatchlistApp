@@ -8,7 +8,6 @@ import retrofit2.Call
 
 class WatchlistRepository(private val watchlistDao: WatchlistDao) {
 
-    // --- ROOM ---
     val allWatchlistMovies: Flow<List<WatchlistMovie>> = watchlistDao.getAllMovies()
 
     suspend fun getMovieById(imdbId: String): WatchlistMovie? {
@@ -27,7 +26,6 @@ class WatchlistRepository(private val watchlistDao: WatchlistDao) {
         watchlistDao.deleteMovie(movie)
     }
 
-    // --- RETROFIT ---
     fun searchMovies(query: String, type: String?, page: Int): Call<MovieSearchResponse> {
         return RetrofitClient.apiServiceInstance.searchMovies(
             searchQuery = query,
