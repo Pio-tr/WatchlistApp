@@ -1,22 +1,26 @@
 package com.example.watchlistapp
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.watchlistapp.database.WatchlistRepository
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.watchlistapp.screens.details.MovieDetailViewModel
 import com.example.watchlistapp.screens.movies.MovieListViewModel
 
-object WatchlistViewModelFactory : ViewModelProvider.Factory {
-    lateinit var repository: WatchlistRepository
+/**
+ * Provides Factory to create instance of ViewModel for the entire WatchlistApp
+ */
+object WatchlistViewModelProvider {
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return when {
-            modelClass.isAssignableFrom(MovieListViewModel::class.java) ->
-                MovieListViewModel(repository) as T
-            modelClass.isAssignableFrom(MovieDetailViewModel::class.java) ->
-                MovieDetailViewModel(repository) as T
-            else -> throw IllegalArgumentException("Nieznana klasa ViewModelu: ${modelClass.name}")
+    val Factory = viewModelFactory {
+
+        initializer {
+            val application = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as WatchlistApplication
+            MovieListViewModel(repository = application.repository)
+        }
+
+        initializer {
+            val application = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as WatchlistApplication
+            MovieDetailViewModel(repository = application.repository)
         }
     }
 }
